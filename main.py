@@ -9,7 +9,7 @@ GRID_ROW = 5
 GRID_COL = 5
 WIDTH = CELL_SIZE * GRID_COL
 HEIGHT = CELL_SIZE * GRID_ROW
-screen = pygame.display.set_mode((WIDTH, HEIGHT + 80))  # 下方留出文字区域
+screen = pygame.display.set_mode((WIDTH, HEIGHT + 80))
 pygame.display.set_caption("一箭又一箭")
 
 # 颜色定义
@@ -18,7 +18,7 @@ BLACK = (0, 0, 0)
 RED = (220, 50, 50)
 BLUE = (30, 120, 220)
 GRAY = (160, 160, 160)
-GREEN = (40,180,40)
+GREEN = (40, 180, 40)
 
 # 方向常量：上、右、下、左
 UP = 0
@@ -26,23 +26,36 @@ RIGHT = 1
 DOWN = 2
 LEFT = 3
 
-# 箭头数据：(行,列,方向,是否存在)
-arrows = [
-    (0, 0, RIGHT, True),
-    (1, 1, DOWN, True),
-    (2, 2, UP, True),
-    (3, 0, RIGHT, True),
-    (0, 3, DOWN, True),
-    (4, 4, LEFT, True),
-    (3, 3, UP, True),
+# 多关卡定义
+levels = [
+    # 第1关
+    [
+        (0, 0, RIGHT, True),
+        (1, 1, DOWN, True),
+        (2, 2, UP, True),
+        (3, 0, RIGHT, True),
+        (0, 3, DOWN, True),
+        (4, 4, LEFT, True),
+        (3, 3, UP, True),
+    ],
+    # 第2关
+    [
+        (0, 1, DOWN, True),
+        (1, 0, RIGHT, True),
+        (2, 3, LEFT, True),
+        (4, 2, UP, True),
+        (1, 4, LEFT, True),
+    ]
 ]
+current_level = 0
+arrows = levels[current_level].copy()
 
 # 方向对应的箭头符号
 arrow_text = ["↑", "→", "↓", "←"]
 font = pygame.font.SysFont("simhei", 48)
 tip_font = pygame.font.SysFont("simhei", 32)
 
-miss_count = 0  # 失误次数
+miss_count = 0
 tip_msg = ""
 
 def is_blocked(r, c, dire, arr_list):
@@ -84,12 +97,14 @@ def draw_board():
             text_surf = font.render(arrow_text[d], True, RED)
             rect = text_surf.get_rect(center=(tx, ty))
             screen.blit(text_surf, rect)
-    
-    # 绘制底部提示文字
+
+    # 底部文字
+    level_surf = tip_font.render(f"关卡:{current_level+1}", True, GREEN)
     miss_surf = tip_font.render(f"失误次数：{miss_count}", True, BLACK)
-    screen.blit(miss_surf, (10, HEIGHT + 10))
     tip_surf = tip_font.render(tip_msg, True, BLUE)
-    screen.blit(tip_surf, (200, HEIGHT + 10))
+    screen.blit(level_surf, (10, HEIGHT + 10))
+    screen.blit(miss_surf, (100, HEIGHT + 10))
+    screen.blit(tip_surf, (240, HEIGHT + 10))
 
 
 def get_click_arrow(mx, my):
@@ -100,6 +115,13 @@ def get_click_arrow(mx, my):
         if alive and r == row and c == col:
             return idx
     return None
+
+# 判断本关卡所有箭头是否全部发射完毕
+def check_level_clear(arr_list):
+    for (r,c,d,alive) in arr_list:
+        if alive:
+            return False
+    return True
 
 
 # 游戏主循环
@@ -115,11 +137,17 @@ while running:
             if idx is not None:
                 r, c, dire, alive = arrows[idx]
                 if not is_blocked(r, c, dire, arrows):
-                    # 移除箭头，飞出
                     arrows[idx] = (r, c, dire, False)
                     tip_msg = "发射成功！"
+                    # 检查通关，切换下一关
+                    if check_level_clear(arrows):
+                        current_level +=1
+                        if current_level < len(levels):
+                            arrows = levels[current_level].copy()
+                            tip_msg = "通关！进入下一关"
+                        else:
+                            tip_msg = "全部关卡通关！"
                 else:
-                    # 点击被阻挡箭头，失误+1
                     miss_count += 1
                     tip_msg = "被挡住，不能发射！"
     pygame.display.flip()
