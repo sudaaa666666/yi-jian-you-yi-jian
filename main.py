@@ -32,6 +32,8 @@ arrows = [
     (2, 2, UP, True),
     (3, 0, RIGHT, True),
     (0, 3, DOWN, True),
+    (4, 4, LEFT, True),
+    (3, 3, UP, True),
 ]
 
 # 方向对应的箭头符号
@@ -40,7 +42,7 @@ font = pygame.font.SysFont("simhei", 48)
 
 
 def is_blocked(r, c, dire, arr_list):
-    """检测箭头飞出路径是否被其他箭头阻挡"""
+    """检测箭头飞出路径是否被其他箭头阻挡，完善四个方向边界判断"""
     dr, dc = 0, 0
     if dire == UP:
         dr, dc = -1, 0
@@ -52,10 +54,11 @@ def is_blocked(r, c, dire, arr_list):
         dr, dc = 0, 1
 
     nr, nc = r + dr, c + dc
+    # 逐格扫描直到棋盘边界
     while 0 <= nr < GRID_ROW and 0 <= nc < GRID_COL:
         for (ar, ac, ad, alive) in arr_list:
             if alive and ar == nr and ac == nc:
-                return True  # 有阻挡
+                return True  # 路径上存在箭头，被阻挡
         nr += dr
         nc += dc
     return False
