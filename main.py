@@ -59,7 +59,7 @@ miss_count = 0
 tip_msg = ""
 
 def is_blocked(r, c, dire, arr_list):
-    """检测箭头飞出路径是否被其他箭头阻挡，完善四个方向边界判断"""
+    """检测箭头飞出路径是否被其他箭头阻挡，修复向上检测数组越界问题"""
     dr, dc = 0, 0
     if dire == UP:
         dr, dc = -1, 0
@@ -71,11 +71,11 @@ def is_blocked(r, c, dire, arr_list):
         dr, dc = 0, 1
 
     nr, nc = r + dr, c + dc
-    # 逐格扫描直到棋盘边界
+    # 先判断坐标合法，再循环查找，防止负数下标越界
     while 0 <= nr < GRID_ROW and 0 <= nc < GRID_COL:
         for (ar, ac, ad, alive) in arr_list:
             if alive and ar == nr and ac == nc:
-                return True  # 路径上存在箭头，被阻挡
+                return True
         nr += dr
         nc += dc
     return False
