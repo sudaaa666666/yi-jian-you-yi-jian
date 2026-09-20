@@ -9,7 +9,7 @@ GRID_ROW = 5
 GRID_COL = 5
 WIDTH = CELL_SIZE * GRID_COL
 HEIGHT = CELL_SIZE * GRID_ROW
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((WIDTH, HEIGHT + 80))  # 下方留出文字区域
 pygame.display.set_caption("一箭又一箭")
 
 # 颜色定义
@@ -18,6 +18,7 @@ BLACK = (0, 0, 0)
 RED = (220, 50, 50)
 BLUE = (30, 120, 220)
 GRAY = (160, 160, 160)
+GREEN = (40,180,40)
 
 # 方向常量：上、右、下、左
 UP = 0
@@ -39,7 +40,10 @@ arrows = [
 # 方向对应的箭头符号
 arrow_text = ["↑", "→", "↓", "←"]
 font = pygame.font.SysFont("simhei", 48)
+tip_font = pygame.font.SysFont("simhei", 32)
 
+miss_count = 0  # 失误次数
+tip_msg = ""
 
 def is_blocked(r, c, dire, arr_list):
     """检测箭头飞出路径是否被其他箭头阻挡，完善四个方向边界判断"""
@@ -80,6 +84,12 @@ def draw_board():
             text_surf = font.render(arrow_text[d], True, RED)
             rect = text_surf.get_rect(center=(tx, ty))
             screen.blit(text_surf, rect)
+    
+    # 绘制底部提示文字
+    miss_surf = tip_font.render(f"失误次数：{miss_count}", True, BLACK)
+    screen.blit(miss_surf, (10, HEIGHT + 10))
+    tip_surf = tip_font.render(tip_msg, True, BLUE)
+    screen.blit(tip_surf, (200, HEIGHT + 10))
 
 
 def get_click_arrow(mx, my):
@@ -107,8 +117,11 @@ while running:
                 if not is_blocked(r, c, dire, arrows):
                     # 移除箭头，飞出
                     arrows[idx] = (r, c, dire, False)
+                    tip_msg = "发射成功！"
                 else:
-                    print("被挡住，不能发射！")
+                    # 点击被阻挡箭头，失误+1
+                    miss_count += 1
+                    tip_msg = "被挡住，不能发射！"
     pygame.display.flip()
 
 pygame.quit()
