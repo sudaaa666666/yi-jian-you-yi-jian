@@ -33,6 +33,7 @@ python main.py
 
 ## 项目文件结构
 .
-├── main.py          # 游戏主程序源代码
-├── README.md        # 项目说明文档
-└── screenshot.png   # 游戏截图资源
+- main.py                                          # 游戏主程序源代码
+- README.md                                        # 项目说明文档
+- 微信图片_20260919205337.png    # 游戏截图资源
+
