@@ -27,9 +27,9 @@ python main.py
 - 游戏目标：按照正确顺序，发射棋盘上全部箭头，清空棋盘通关
 
 ## 游戏截图
-https://github.com/sudaaa666666/yi-jian-you-yi-jian/blob/main/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260919205337.png
 > 
-> 游戏运行截图，后续上传图片后修改此处
+> 游戏运行截图
+<img width="450" height="401" alt="微信图片_20260919205337" src="https://github.com/user-attachments/assets/3ff6eafd-26f5-4fad-a20b-07ce64bfe408" />
 
 ## 项目文件结构
 .
